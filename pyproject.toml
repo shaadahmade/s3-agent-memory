@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "s3-agent-memory"
+version = "0.1.0"
+description = "Durable, object-attached memory for AI agents using Amazon S3 object annotations."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "s3-agent-memory contributors" }]
+keywords = ["s3", "agents", "memory", "annotations", "langgraph", "llm"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "boto3>=1.43",
+    "pydantic>=2",
+]
+
+[project.optional-dependencies]
+langgraph = ["langgraph>=0.2", "langchain-core>=0.3"]
+dev = [
+    "pytest>=7",
+    "boto3>=1.43",
+    "pydantic>=2",
+    "langgraph>=0.2",
+    "langchain-core>=0.3",
+]
+
+[project.urls]
+Homepage = "https://github.com/shaadahmade/s3-agent-memory"
+
+[tool.setuptools]
+packages = ["s3_agent_memory"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
