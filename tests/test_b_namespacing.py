@@ -68,3 +68,20 @@ def test_b5_foreign_annotations_ignored(alpha, fake):
     alpha.forget("summary")  # deletes only the library memory
     remaining = fake.annotation_names(TEST_BUCKET, TEST_KEY)
     assert remaining == ["mediainfo"]  # foreign annotation survived
+
+
+def test_b6_cannot_forget_another_agents_memory(alpha, beta, fake):
+    """forget mutates only the caller's namespace — no back door on delete."""
+    beta.remember(SummaryMemory(agent_id="beta", text="beta's, hands off"))
+
+    # alpha has no 'summary' of its own, so forgetting raises rather than
+    # reaching into beta's namespace.
+    import pytest
+
+    from s3_agent_memory import AnnotationNotFound
+
+    with pytest.raises(AnnotationNotFound):
+        alpha.forget("summary")
+
+    # beta's memory is untouched.
+    assert fake.annotation_names(TEST_BUCKET, TEST_KEY) == ["mem.beta.summary"]

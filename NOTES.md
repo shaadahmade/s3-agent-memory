@@ -109,3 +109,17 @@ annotations that list is not free. A cheaper alternative is to attempt
 `get_object_annotation` (which DOES model `NoSuchAnnotation`) and delete on
 success — one round-trip either way, and it streams only the one payload rather
 than listing all names. I'd switch `forget` to the get-based existence check.
+
+## 2026-07-22 — Post-build review fix: write-isolation back door on forget()
+
+Self-review after the green run found a real contract violation. `forget()` had
+an `agent_id=` override, so agent alpha could `forget(kind, agent_id="beta")`
+and delete beta's memory. Contract item 1 restricts an instance to WRITE only
+under its own agent_id — and deletion is a mutation of another agent's
+namespace, so this was a hole in the isolation guarantee (which `remember()`
+enforces via the forged-id overwrite, but `forget()` did not).
+
+Fix: removed the `agent_id` parameter; `forget()` now operates strictly on the
+caller's own namespace. Added eval **B6** to pin it: alpha forgetting a kind it
+doesn't own raises `AnnotationNotFound` and never touches beta's memory. New
+result: **24 passed, 3 skipped**. Demo unaffected.
