@@ -243,21 +243,17 @@ class S3Memory:
 
     # -- delete ----------------------------------------------------------
 
-    def forget(
-        self,
-        kind: str,
-        slot: Optional[str] = None,
-        *,
-        agent_id: Optional[str] = None,
-    ) -> None:
-        """Delete one memory. Raises ``AnnotationNotFound`` if it doesn't exist.
+    def forget(self, kind: str, slot: Optional[str] = None) -> None:
+        """Delete one of THIS agent's memories from the object.
 
-        S3's DeleteObjectAnnotation is idempotent server-side, so we verify
-        existence first to make ``forget`` honest about missing memories
-        (eval C4). ``agent_id`` defaults to this agent (you may forget your own).
+        An agent may only mutate its own namespace, so ``forget`` can delete
+        only memories this instance owns — there is deliberately no way to
+        delete another agent's memory (contract item 1: write only under your
+        own ``agent_id``). Raises ``AnnotationNotFound`` if the memory doesn't
+        exist: S3's DeleteObjectAnnotation is idempotent server-side, so we
+        verify existence first to keep ``forget`` honest about misses (eval C4).
         """
-        owner = agent_id if agent_id is not None else self.agent_id
-        name = self._name_for(kind, slot, owner)
+        name = self._name_for(kind, slot, self.agent_id)
         existing = self._raw.list_annotation_names(self.bucket, self.key)
         if name not in existing:
             raise AnnotationNotFound(

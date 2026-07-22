@@ -116,7 +116,7 @@ tests pass. Gate G (live AWS) is env-gated on `S3MEM_LIVE_BUCKET` and is reporte
 | Gate | What it proves | Tests | Status |
 | --- | --- | --- | --- |
 | A | Round-trip integrity (deep equality, unicode, 1 MB boundary, 1,000-name cap) | 4 | **PASS** |
-| B | Namespacing & multi-agent safety (no forging, no clobber, slots, filtering, foreign-annotation isolation) | 5 | **PASS** |
+| B | Namespacing & multi-agent safety (no forging, no clobber, slots, filtering, foreign-annotation isolation, no cross-agent forget) | 6 | **PASS** |
 | C | Robustness & failure honesty (empty, malformed-flagged, list/get race, forget-missing, bad URIs) | 5 | **PASS** |
 | D | Durability semantics (annotations travel on copy, die on delete, `recall_text` bounds) | 3 | **PASS** |
 | E | Fleet query layer (SQL shape, quote-escaping, lag disclosure) | 3 | **PASS** |
@@ -126,7 +126,7 @@ tests pass. Gate G (live AWS) is env-gated on `S3MEM_LIVE_BUCKET` and is reporte
 Last pytest summary line:
 
 ```
-23 passed, 3 skipped in 0.05s
+24 passed, 3 skipped in 0.05s
 ```
 
 ## License
